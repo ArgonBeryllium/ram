@@ -10,7 +10,7 @@ void Camera::init()
 
 static v2f getPlaneDims()
 {
-	return {1, float(H)/W*1};
+	return v2f{std::tan(Camera::fov/2 - M_PI_2f32), float(H)/W*std::tan(Camera::fov/2 - M_PI_2f32)}*Camera::plane_offset*-2;
 }
 v3f Camera::projectPtoS(const v2i &pp, float zd)
 {
