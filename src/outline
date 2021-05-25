@@ -1,0 +1,32 @@
+## sdf.h ##
+- SDF
+	v3f pos
+	void getIntersection(Ray r)
+- Sphere : SDF
+	float radius
+- Box : SDF
+	v3f scale
+	v3f angles
+- LineSegment : SDF
+	v3f& start = pos
+	v3f end
+
+## ray.h ##
+- Ray
+	v3f ori
+	v3f dir
+- Intersection
+	SDF* sdf
+	float min_dist
+	float max_dist
+	v3f normal
+## camera.h ##
+- Camera
+	static v3f pos
+	static v3f angles
+	static float fov
+	static float plane_offset
+
+	static v2i projectStoP(const v3f& sp)
+	static v3f projectPtoS(const v2i& pp)
+	static v3f getRayDir(int x, int y)

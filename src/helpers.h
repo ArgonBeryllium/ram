@@ -2,17 +2,19 @@
 #include <shitrndr.h>
 #include <SDL2/SDL_ttf.h>
 #include <map>
+#include "operators.h"
 
 #define gk(X) shitrndr::Input::getKey(X)
 using v2f = shitrndr::helpers::vec2<float>;
+using v2i = shitrndr::helpers::vec2<int>;
 
 inline float frand() { return float(std::rand())/RAND_MAX; }
 inline float frange() { return (frand()*2)-1; }
 
-SDL_Window* owin;
-SDL_Renderer* oren;
+inline SDL_Window* owin;
+inline SDL_Renderer* oren;
 
-TTF_Font* font;
+inline TTF_Font* font;
 inline void renderText(const std::string& text, int x, int y, bool cache = 0, SDL_Colour col = {255,255,255,255}, SDL_Renderer* r = oren)
 {
 	using namespace shitrndr;
@@ -33,14 +35,15 @@ inline void renderText(const std::string& text, int x, int y, bool cache = 0, SD
 	if(!cache) SDL_DestroyTexture(t);
 }
 
-void initHelpers()
+inline void initHelpers()
 {
 	TTF_Init();
 	font = TTF_OpenFont("res/ProggyTiny.ttf", 25);
 
 	SDL_CreateWindowAndRenderer(256, 256, 0, &owin, &oren);
+	SDL_SetWindowPosition(owin, 0,0);
 }
-void renderFPS(float time, float delta)
+inline void renderFPS(float time, float delta)
 {
 	static std::string ctt;
 	static double last = 0;
@@ -55,4 +58,8 @@ void renderFPS(float time, float delta)
 	renderText(ctt, 0, 0);
 	renderText("("+std::to_string(delta)+")", 0, 30);
 	renderText("___________", 0, 40);
+}
+inline v2i getHelperCoords(v3f p)
+{
+	return shitrndr::Input::getKey(SDLK_LSHIFT) ? (v2f(p.x, -p.z)*8 + v2f{128,128}).to<int>() : (v2f(p.z, -p.y)*8 + v2f{128,128}).to<int>();
 }
