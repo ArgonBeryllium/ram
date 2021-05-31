@@ -5,6 +5,7 @@
 struct Camera
 {
 	static v3f pos;
+	static v3f angles;
 	static float fov;
 	static float plane_offset;
 
