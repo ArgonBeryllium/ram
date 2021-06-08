@@ -4,12 +4,19 @@
 #include "helpers.h"
 #include <shitrndr.h>
 
+struct Shader
+{
+	static Shader* def_inst;
+	virtual SDL_Colour getPixelValue(SDF* obj, Ray ray, Intersection i, uint32_t rec = 0);
+};
 struct SDF
 {
 	v3f pos;
+	Shader* shader = Shader::def_inst;
 	virtual Intersection getIntersection(Ray ray) = 0;
 	virtual void renderPreview(SDL_Renderer* r) = 0;
 };
+
 struct Sphere : SDF
 {
 	float radius = 1;

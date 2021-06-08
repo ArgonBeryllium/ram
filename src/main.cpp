@@ -13,15 +13,11 @@
 using namespace shitrndr;
 
 const static size_t num_samples = 1;
-std::vector<SDF*> world;
-v3f lp = {3, 1, -4};
-float li = 110;
 
 SDL_Colour castRay(int x, int y, int seed = -1)
 {
 	if(seed!=-1) std::srand(seed);
-	float r, g, b, a = 1;
-	r = g = b = .0;
+	SDL_Colour out = {0,0,0,255};
 
 	Ray ray = {Camera::projectPtoS({x,y}), Camera::getRayDir({x,y})};
 	v2i ro = getHelperCoords(ray.ori);
@@ -32,29 +28,22 @@ SDL_Colour castRay(int x, int y, int seed = -1)
 	for(SDF* obj : world)
 	{
 		Intersection i = obj->getIntersection(ray);
+
+		SetRenderColour(oren, {255,255,255,1});
+
 		if(i.intersecting && i.min_dist>0 && i.min_dist<sd)
 		{
 			sd = i.min_dist;
-			ray.ori = ray.ori+ray.dir*(i.min_dist-.01);
-			ray.dir = (lp-ray.ori).normalised();
-			r = g = b = (1.f-std::min(1.f, std::max(0.f, (ray.ori-lp).getLengthSquared()/li)));
-			for(SDF* obj_ : world)
-			{
-				i = obj_->getIntersection(ray);
-				if(i.intersecting)
-				{
-					r = g = b = 0;
-					break;
-				}
-			}
-			i = obj->getIntersection(ray);
+			out = obj->shader->getPixelValue(obj, ray, i);
+
 			SetRenderColour(oren, {255,0,0,1});
 		}
+
 		SDL_RenderDrawLine(oren, ro.x, ro.y, re.x, re.y);
 	}
 	SetRenderColour(oren, {255,255,255,255});
 
-	return {Uint8(r*255), Uint8(g*255), Uint8(b*255), Uint8(a*255)};
+	return out;
 }
 SDL_Colour getPixelColour(int x, int y)
 {
