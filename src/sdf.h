@@ -7,7 +7,7 @@
 struct Shader
 {
 	static Shader* def_inst;
-	virtual SDL_Colour getPixelValue(SDF* obj, Ray ray, Intersection i, uint32_t rec = 0);
+	virtual SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0);
 };
 struct SDF
 {
