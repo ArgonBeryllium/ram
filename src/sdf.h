@@ -1,16 +1,20 @@
 #pragma once
 #include "operators.h"
 #include "ray.h"
+#include "helpers.h"
+#include <shitrndr.h>
 
 struct SDF
 {
 	v3f pos;
 	virtual Intersection getIntersection(Ray ray) = 0;
+	virtual void renderPreview(SDL_Renderer* r) = 0;
 };
 struct Sphere : SDF
 {
 	float radius = 1;
-	Intersection getIntersection(Ray ray)
+	Sphere(v3f pos_= {}, float radius_ = 1) : SDF(), radius(radius_) { pos = pos_; }
+	Intersection getIntersection(Ray ray) override
 	{	
 		v3f od = ray.ori-pos;
 		float b = dot(ray.dir, od);
@@ -25,4 +29,9 @@ struct Sphere : SDF
 		float max_dist = std::max(d1, d2);
 		return Intersection{min_dist>0, min_dist, max_dist, (ray.ori+ray.dir*min_dist-pos).normalised(), this};
 	};
+	void renderPreview(SDL_Renderer* r) override
+	{
+		v2i sp = getHelperCoords(pos); 
+		shitrndr::RenderDrawCircle(r, sp.x, sp.y, radius*8);
+	}
 };

@@ -3,6 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <map>
 #include "operators.h"
+#include "globals.h"
 
 #define gk(X) shitrndr::Input::getKey(X)
 using v2f = shitrndr::helpers::vec2<float>;
@@ -41,7 +42,9 @@ inline void initHelpers()
 	font = TTF_OpenFont("res/ProggyTiny.ttf", 25);
 
 	SDL_CreateWindowAndRenderer(256, 256, 0, &owin, &oren);
-	SDL_SetWindowPosition(owin, 0,0);
+	SDL_SetWindowPosition(owin, 960-RW/2-256,540-256);
+	SDL_SetRenderDrawBlendMode(oren, SDL_BLENDMODE_BLEND);
+
 }
 inline void renderFPS(float time, float delta)
 {
@@ -61,5 +64,9 @@ inline void renderFPS(float time, float delta)
 }
 inline v2i getHelperCoords(v3f p)
 {
-	return shitrndr::Input::getKey(SDLK_LSHIFT) ? (v2f(p.x, -p.z)*8 + v2f{128,128}).to<int>() : (v2f(p.z, -p.y)*8 + v2f{128,128}).to<int>();
+	return shitrndr::Input::getKey(SDLK_LSHIFT) ? (v2f(p.z, -p.y)*8 + v2f{128,128}).to<int>() : (v2f(p.x, -p.z)*8 + v2f{128,128}).to<int>();
+}
+inline v2f getHelperDir(v3f d)
+{
+	return shitrndr::Input::getKey(SDLK_LSHIFT) ? v2f(d.z, -d.y)*8 : v2f(d.x, -d.z)*8;
 }

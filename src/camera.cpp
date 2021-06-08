@@ -22,5 +22,5 @@ v3f Camera::getRayDir(const v2i &pp)
 {
 	float xs = float(pp.x*2 - W)/W;
 	float ys = float(pp.y*2 - H)/H;
-	return v3f{std::cos(fov/2*xs - M_PI_2f32), -std::cos(fov/2*ys - M_PI_2f32), 1};
+	return v3f{std::cos(fov/2*xs - M_PI_2f32), -std::cos(fov/2*ys - M_PI_2f32),std::min(1.f, std::sin(fov/2*ys - M_PI_2f32)*std::sin(fov/2*xs - M_PI_2f32))};
 };
