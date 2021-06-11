@@ -14,6 +14,8 @@ struct SDF
 	v3f pos;
 	Shader* shader = Shader::def_inst;
 	virtual Intersection getIntersection(Ray ray) = 0;
+	virtual v3f getNormal(v3f surface_point) = 0;
+
 	virtual void renderPreview(SDL_Renderer* r) = 0;
 };
 
@@ -36,9 +38,28 @@ struct Sphere : SDF
 		float max_dist = std::max(d1, d2);
 		return Intersection{min_dist>0, min_dist, max_dist, (ray.ori+ray.dir*min_dist-pos).normalised(), this};
 	};
+	v3f getNormal(v3f surface_point) override { return (pos - surface_point).normalised(); }
+
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 
 		shitrndr::RenderDrawCircle(r, sp.x, sp.y, radius*8);
+	}
+};
+
+struct Plane : SDF
+{
+	v3f normal;
+	Plane(v3f pos_ = {}, v3f normal_ = {0,1,0}) : SDF(), normal(normal_) { pos = pos_; }
+	Intersection getIntersection(Ray ray) override
+	{
+		float dist = dot(pos-ray.ori, normal)/dot(ray.dir, normal);
+		return Intersection{dist>0, dist, dist, normal, this};
+	}
+	v3f getNormal(v3f surface_point) override { return normal; }
+	void renderPreview(SDL_Renderer* r) override
+	{
+		v2i sp = getHelperCoords(pos); 
+		shitrndr::RenderFillCircle(oren, sp.x, sp.y, 4);
 	}
 };
