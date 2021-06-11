@@ -49,7 +49,7 @@ SDL_Colour getPixelColour(int x, int y)
 {
 	MegaCol out;
 	for (size_t i = 0; i != num_samples; i++)
-		out += castRay(x, y);
+		out += castRay(x, y, x+y*2);
 	out /= num_samples;
 	return out.col();
 }
@@ -72,12 +72,16 @@ int main()
 	world.push_back(new Sphere());
 	world.push_back(new Sphere({0,-5,0}, 3));
 	world.push_back(new Sphere({0,-3,4}, 3));
+	world.push_back(new Plane({0,-3,0}));
 
 	onRender = [](double delta, double time)
 	{
 		SDL_SetRenderDrawColor(oren, 25, 5, 35, 255);
 		SDL_RenderClear(oren);
 		SetRenderColour(oren, {255,255,255,255});
+
+		lp.x = std::cos(time)*5;
+		lp.z = std::sin(time)*5;
 
 		// camera controls
 		{

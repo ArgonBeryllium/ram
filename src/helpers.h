@@ -42,7 +42,7 @@ inline void initHelpers()
 	font = TTF_OpenFont("res/ProggyTiny.ttf", 25);
 
 	SDL_CreateWindowAndRenderer(256, 256, 0, &owin, &oren);
-	SDL_SetWindowPosition(owin, 960-RW/2-256,540-256);
+	SDL_SetWindowPosition(owin, 960-RW/2-256,540-RH/2);
 	SDL_SetRenderDrawBlendMode(oren, SDL_BLENDMODE_BLEND);
 
 }
