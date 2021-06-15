@@ -69,15 +69,16 @@ int main()
 		bg_col = {0,0,0,0};
 	}
 
-	world.push_back(new Sphere());
-	world.push_back(new Sphere({0,-5,0}, 3));
-	world.push_back(new Sphere({0,-3,4}, 3));
 	Shader_Def red_n_shiny = Shader_Def();
 	red_n_shiny.col = {1,0,0,1};
 	red_n_shiny.smooth = .9;
 	red_n_shiny.reflective = .9;
+	world.push_back(new Sphere());
 	world[world.size()-1]->shader  = &red_n_shiny;
+	world.push_back(new Sphere({0,-5,0}, 3));
+	world.push_back(new Sphere({0,-3,4}, 3));
 	world.push_back(new Plane({0,-3,0}));
+	lights.push_back(new Light());
 
 	onRender = [](double delta, double time)
 	{
@@ -85,8 +86,15 @@ int main()
 		SDL_RenderClear(oren);
 		SetRenderColour(oren, {255,255,255,255});
 
-		lp.x = std::cos(time)*5;
-		lp.z = std::sin(time)*5;
+		lights[0]->col.r = std::abs(std::sin(time))*10;
+		lights[0]->col.g = std::abs(std::cos(time))*10;
+		lights[0]->col.b = std::abs(std::sin(time+1))*10;
+
+		lights[0]->pos.x = std::cos(time)*5;
+		lights[0]->pos.y = std::cos(time)*2 + 1;
+		lights[0]->pos.z = std::sin(time)*5;
+
+		world[0]->pos.y = std::sin(time+.2);
 
 		// camera controls
 		{
@@ -122,7 +130,7 @@ int main()
 			RenderFillCircle(oren, cp.x, cp.y, 2);
 			for(SDF* obj : world)
 				obj->renderPreview(oren);
-			v2i slp = getHelperCoords(lp);
+			v2i slp = getHelperCoords(lights[0]->pos);
 			RenderFillCircle(oren, slp.x, slp.y, 2);
 		}
 

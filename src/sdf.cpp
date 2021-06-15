@@ -11,24 +11,35 @@ SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersect
 	float& b = out.b;
 	float& a = out.a;
 
-	v3f dir_rough_offset = v3f{frand(), frand(), frand()}*.1*(1-smooth);
 	v3f point_surf = o_ray.ori+o_ray.dir*(o_i.min_dist-.0001);
-	v3f dir_light = (lp-point_surf).normalised() + dir_rough_offset;
-	
 	v3f normal = obj->getNormal(point_surf);
-	r = g = b = std::pow(std::abs(dot(normal, (point_surf-lp).normalised())), std::pow(smooth, 5.)*1000) / (point_surf-lp).getLengthSquared()*li;
+	v3f dir_rough_offset = v3f{frand(), frand(), frand()}*.1*(1-smooth);
 
 	Ray ray = o_ray;
 	ray.ori = point_surf;
-	ray.dir = dir_light;
-
-	for(SDF* obj_ : world)
+	
+	for(Light* l : lights)
 	{
-		Intersection i = obj_->getIntersection(ray);
-		if(i.intersecting)
+		v3f dir_light = (l->pos-point_surf).normalised() + dir_rough_offset;
+
+		ray.dir = dir_light;
+
+		bool abstructed = 0;
+		for(SDF* obj_ : world)
 		{
-			r = g = b = 0;
-			break;
+			Intersection i = obj_->getIntersection(ray);
+			if(i.intersecting)
+			{
+				abstructed = 1;
+				break;
+			}
+		}
+		if(!abstructed)
+		{
+			float lum = std::pow(std::abs(dot(normal, dir_light.normalised())), std::pow(smooth, 5.)*1000) / (point_surf-l->pos).getLengthSquared()*l->intensity;
+			r += lum*l->col.r;
+			g += lum*l->col.g;
+			b += lum*l->col.b;
 		}
 	}
 

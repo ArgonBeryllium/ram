@@ -4,6 +4,12 @@
 #include "helpers.h"
 #include <shitrndr.h>
 
+struct Light
+{
+	v3f pos;
+	float intensity = 20;
+	FloatCol col = {1,1,1,1};
+};
 struct Shader
 {
 	static Shader* def_inst;
