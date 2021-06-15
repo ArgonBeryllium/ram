@@ -2,20 +2,23 @@
 
 Shader* Shader::def_inst = new Shader{};
 
-static constexpr float SMOOTH = .1, REFL = .9;
-static const SDL_Colour GI = {1,1,1,255};
+static constexpr float SMOOTH = .3, REFL = .05;
+static constexpr size_t BOUNCE_COUNT = 2;
 SDL_Colour Shader::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection& o_i, uint32_t rec)
 {
 	float r, g, b, a = 1;
 	r = g = b = .0;
 
-	Ray ray = o_ray;
-	ray.ori = ray.ori+ray.dir*(o_i.min_dist-.0001);
-	ray.dir = (lp-ray.ori).normalised();
+	v3f point_surf = o_ray.ori+o_ray.dir*(o_i.min_dist-.0001);
+	v3f dir_light = (lp-point_surf).normalised();
 	//r = g = b = (1.f-std::min(1.f, std::max(0.f, (ray.ori-lp).getLengthSquared()/li)));
 	
-	v3f normal = obj->getNormal(ray.ori);
-	r = g = b = std::pow(std::abs(dot(normal, (obj->pos-lp).normalised())), SMOOTH*SMOOTH*1000) / (ray.ori-lp).getLengthSquared()*li;
+	v3f normal = obj->getNormal(point_surf);
+	r = g = b = std::pow(std::abs(dot(normal, (point_surf-lp).normalised())), std::pow(SMOOTH, 5.)*1000) / (point_surf-lp).getLengthSquared()*li;
+
+	Ray ray = o_ray;
+	ray.ori = point_surf;
+	ray.dir = dir_light;
 
 	for(SDF* obj_ : world)
 	{
@@ -27,10 +30,10 @@ SDL_Colour Shader::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection&
 		}
 	}
 
-	if(rec<4)
+	if(rec<BOUNCE_COUNT)
 		for(SDF* obj_ : world)
 		{
-			ray.dir = (ray.ori-obj->pos).normalised();
+			ray.dir = (ray.ori-obj->pos).normalised() + v3f{frand(), frand(), frand()}*.1*(1-SMOOTH);
 			Intersection i = obj_->getIntersection(ray);
 			if(i.intersecting)
 			{
