@@ -11,7 +11,6 @@ struct Camera
 
 	static void init();
 
-	static v3f projectPtoS(const v2i& pp, float zd = 0);
+	static v3f getPlaneCoord(const v2i& pp);
 	static v3f getRayDir(const v2i& pp);
-	static v2i projectStoP(const v3f& pp);
 };

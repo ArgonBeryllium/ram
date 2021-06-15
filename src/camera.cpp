@@ -11,10 +11,10 @@ static v2f getPlaneDims()
 {
 	return v2f{std::tan(Camera::fov/2 - M_PI_2f32), -float(H)/W*std::tan(Camera::fov/2 - M_PI_2f32)}*Camera::plane_offset*-2;
 }
-v3f Camera::projectPtoS(const v2i &pp, float zd)
+v3f Camera::getPlaneCoord(const v2i &pp)
 {
 	v2f pd = getPlaneDims();
-	return pos+v3f{float(pp.x*2 - W)/W*pd.x, float(pp.y*2-H)/H*pd.y, plane_offset+zd};
+	return pos+v3f{float(pp.x*2 - W)/W*pd.x, float(pp.y*2-H)/H*pd.y, plane_offset};
 }
 v3f Camera::getRayDir(const v2i &pp)
 {

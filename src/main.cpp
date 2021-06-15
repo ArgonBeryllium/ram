@@ -19,7 +19,7 @@ SDL_Colour castRay(int x, int y, int seed = -1)
 	if(seed!=-1) std::srand(seed);
 	SDL_Colour out = GI.col();
 
-	Ray ray = {Camera::projectPtoS({x,y}), Camera::getRayDir({x,y})};
+	Ray ray = {Camera::getPlaneCoord({x,y}), Camera::getRayDir({x,y})};
 	v2i ro = getHelperCoords(ray.ori);
 	v2i re = ro+(getHelperDir(ray.dir)*512).to<int>();
 	SetRenderColour(oren, {255,255,255,1});
@@ -71,14 +71,18 @@ int main()
 
 	Shader_Def red_n_shiny = Shader_Def();
 	red_n_shiny.col = {1,0,0,1};
-	red_n_shiny.smooth = .9;
+	red_n_shiny.smooth = .8;
 	red_n_shiny.reflective = .9;
+
 	world.push_back(new Sphere());
 	world[world.size()-1]->shader  = &red_n_shiny;
+
 	world.push_back(new Sphere({0,-5,0}, 3));
 	world.push_back(new Sphere({0,-3,4}, 3));
 	world.push_back(new Plane({0,-3,0}));
-	lights.push_back(new Light());
+
+	lights.push_back(new Light{{}, 10});
+	lights.push_back(new Light{{-20, 20, -4}, 400.f, {1, .9, .8}});
 
 	onRender = [](double delta, double time)
 	{
@@ -115,12 +119,6 @@ int main()
 				SetColour(col);
 				SDL_RenderDrawPoint(ren, x, y);
 			}
-		/*
-		SetColour({255,255,255,155});
-		v2i slp = Camera::projectStoP(lp);
-		DrawCircle(slp.x, slp.y, 8);
-		FillCircle(slp.x, slp.y, 4);
-		*/
 
 		renderFPS(time, delta);
 
