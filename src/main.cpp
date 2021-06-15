@@ -17,7 +17,7 @@ const static size_t num_samples = 1;
 SDL_Colour castRay(int x, int y, int seed = -1)
 {
 	if(seed!=-1) std::srand(seed);
-	SDL_Colour out = {0,0,0,255};
+	SDL_Colour out = GI;
 
 	Ray ray = {Camera::projectPtoS({x,y}), Camera::getRayDir({x,y})};
 	v2i ro = getHelperCoords(ray.ori);
@@ -49,7 +49,7 @@ SDL_Colour getPixelColour(int x, int y)
 {
 	MegaCol out;
 	for (size_t i = 0; i != num_samples; i++)
-		out += castRay(x, y, x+y*2);
+		out += castRay(x, y, x+y*W);
 	out /= num_samples;
 	return out.col();
 }
@@ -102,7 +102,12 @@ int main()
 				SetColour(col);
 				SDL_RenderDrawPoint(ren, x, y);
 			}
-		SetColour({0,0,255});
+		/*
+		SetColour({255,255,255,155});
+		v2i slp = Camera::projectStoP(lp);
+		DrawCircle(slp.x, slp.y, 8);
+		FillCircle(slp.x, slp.y, 4);
+		*/
 
 		renderFPS(time, delta);
 
