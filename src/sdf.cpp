@@ -1,20 +1,22 @@
 #include "sdf.h"
 
-Shader* Shader::def_inst = new Shader{};
+Shader* Shader::def_inst = new Shader_Def{};
 
-static constexpr float SMOOTH = .3, REFL = .05;
-static constexpr size_t BOUNCE_COUNT = 2;
-SDL_Colour Shader::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection& o_i, uint32_t rec)
+static constexpr size_t BOUNCE_COUNT = 4;
+SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection& o_i, uint32_t rec)
 {
-	float r, g, b, a = 1;
-	r = g = b = .0;
+	FloatCol out = {0,0,0,1};
+	float& r = out.r;
+	float& g = out.g;
+	float& b = out.b;
+	float& a = out.a;
 
+	v3f dir_rough_offset = v3f{frand(), frand(), frand()}*.1*(1-smooth);
 	v3f point_surf = o_ray.ori+o_ray.dir*(o_i.min_dist-.0001);
-	v3f dir_light = (lp-point_surf).normalised();
-	//r = g = b = (1.f-std::min(1.f, std::max(0.f, (ray.ori-lp).getLengthSquared()/li)));
+	v3f dir_light = (lp-point_surf).normalised() + dir_rough_offset;
 	
 	v3f normal = obj->getNormal(point_surf);
-	r = g = b = std::pow(std::abs(dot(normal, (point_surf-lp).normalised())), std::pow(SMOOTH, 5.)*1000) / (point_surf-lp).getLengthSquared()*li;
+	r = g = b = std::pow(std::abs(dot(normal, (point_surf-lp).normalised())), std::pow(smooth, 5.)*1000) / (point_surf-lp).getLengthSquared()*li;
 
 	Ray ray = o_ray;
 	ray.ori = point_surf;
@@ -33,18 +35,30 @@ SDL_Colour Shader::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection&
 	if(rec<BOUNCE_COUNT)
 		for(SDF* obj_ : world)
 		{
-			ray.dir = (ray.ori-obj->pos).normalised() + v3f{frand(), frand(), frand()}*.1*(1-SMOOTH);
+			ray.dir = normal + dir_rough_offset;
 			Intersection i = obj_->getIntersection(ray);
 			if(i.intersecting)
 			{
 				SDL_Colour nc = obj_->shader->getPixelValue(obj_, ray, i, rec+1);
-				r += REFL*float(nc.r)/255;
-				g += REFL*float(nc.g)/255;
-				b += REFL*float(nc.b)/255;
+				r += reflective*float(nc.r)/255;
+				g += reflective*float(nc.g)/255;
+				b += reflective*float(nc.b)/255;
 			}
 		}
-	r += float(GI.r)/255;
-	g += float(GI.g)/255;
-	b += float(GI.b)/255;
-	return SDL_Colour{Uint8(std::min(1.f, std::max(0.f, r))*255), Uint8(std::min(1.f, std::max(0.f, r))*255), Uint8(std::min(1.f, std::max(0.f, b))*255), Uint8(std::min(1.f, std::max(0.f, a))*255)};
+
+	r *= col.r;
+	g *= col.g;
+	b *= col.b;
+	a *= col.a;
+
+	r += GI.r;
+	g += GI.g;
+	b += GI.b;
+
+	r = std::max(0.f, std::min(1.f, r));
+	g = std::max(0.f, std::min(1.f, g));
+	b = std::max(0.f, std::min(1.f, b));
+	a = std::max(0.f, std::min(1.f, a));
+
+	return out.col();
 }

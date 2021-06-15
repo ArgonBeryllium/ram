@@ -7,8 +7,17 @@
 struct Shader
 {
 	static Shader* def_inst;
-	virtual SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0);
+	virtual SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
 };
+struct Shader_Def : Shader
+{
+	FloatCol col = {1,1,1,1};
+	float smooth = .3;
+	float reflective = .2;
+	
+	SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
+};
+
 struct SDF
 {
 	v3f pos;
@@ -38,7 +47,7 @@ struct Sphere : SDF
 		float max_dist = std::max(d1, d2);
 		return Intersection{min_dist>0, min_dist, max_dist, (ray.ori+ray.dir*min_dist-pos).normalised(), this};
 	};
-	v3f getNormal(v3f surface_point) override { return (pos - surface_point).normalised(); }
+	v3f getNormal(v3f surface_point) override { return (surface_point - pos).normalised(); }
 
 	void renderPreview(SDL_Renderer* r) override
 	{

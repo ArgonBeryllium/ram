@@ -40,6 +40,27 @@ inline void operator/=(MegaCol& a, const SDL_Colour& b) { a = a/b; }
 inline void operator*=(MegaCol& a, const int& b) { a = a*b; }
 inline void operator/=(MegaCol& a, const int& b) { a = a/b; }
 
+struct FloatCol
+{
+	float r = 1, g = 1, b = 1, a = 1;;
+	SDL_Colour col() const { return {Uint8(r*255), Uint8(g*255), Uint8(b*255), Uint8(a*255) }; }
+};
+
+inline FloatCol operator+(const FloatCol& a, const SDL_Colour& b) { return FloatCol{a.r+b.r, a.g+b.g, a.b+b.b, a.a+b.a}; }
+inline FloatCol operator-(const FloatCol& a, const SDL_Colour& b) { return FloatCol{a.r-b.r, a.g-b.g, a.b-b.b, a.a-b.a}; }
+inline FloatCol operator*(const FloatCol& a, const SDL_Colour& b) { return FloatCol{a.r*b.r, a.g*b.g, a.b*b.b, a.a*b.a}; }
+inline FloatCol operator/(const FloatCol& a, const SDL_Colour& b) { return FloatCol{a.r/b.r, a.g/b.g, a.b/b.b, a.a/b.a}; }
+
+inline FloatCol operator*(const FloatCol& a, const float& b) { return FloatCol{a.r*b, a.g*b, a.b*b, a.a*b}; }
+inline FloatCol operator/(const FloatCol& a, const float& b) { return FloatCol{a.r/b, a.g/b, a.b/b, a.a/b}; }
+
+inline void operator+=(FloatCol& a, const SDL_Colour& b) { a = a+b; }
+inline void operator-=(FloatCol& a, const SDL_Colour& b) { a = a-b; }
+inline void operator*=(FloatCol& a, const SDL_Colour& b) { a = a*b; }
+inline void operator/=(FloatCol& a, const SDL_Colour& b) { a = a/b; }
+
+inline void operator*=(FloatCol& a, const float& b) { a = a*b; }
+inline void operator/=(FloatCol& a, const float& b) { a = a/b; }
 
 struct v3f
 {
