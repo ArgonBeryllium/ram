@@ -9,7 +9,7 @@
 #include "globals.h"
 #include "camera.h"
 #include "ray.h"
-#include "sdf.h"
+#include "solids.h"
 using namespace shitrndr;
 
 const static size_t num_samples = 1;
@@ -25,7 +25,7 @@ SDL_Colour castRay(int x, int y, int seed = -1)
 	SetRenderColour(oren, {255,255,255,1});
 
 	float sd = MAXFLOAT;
-	for(SDF* obj : world)
+	for(Solid* obj : world)
 	{
 		Intersection i = obj->getIntersection(ray);
 
@@ -126,7 +126,7 @@ int main()
 		{
 			v2i cp = getHelperCoords(Camera::pos);
 			RenderFillCircle(oren, cp.x, cp.y, 2);
-			for(SDF* obj : world)
+			for(Solid* obj : world)
 				obj->renderPreview(oren);
 			v2i slp = getHelperCoords(lights[0]->pos);
 			RenderFillCircle(oren, slp.x, slp.y, 2);

@@ -13,7 +13,7 @@ struct Light
 struct Shader
 {
 	static Shader* def_inst;
-	virtual SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
+	virtual SDL_Colour getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
 };
 struct Shader_Def : Shader
 {
@@ -21,10 +21,10 @@ struct Shader_Def : Shader
 	float smooth = .3;
 	float reflective = .2;
 	
-	SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
+	SDL_Colour getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
 };
 
-struct SDF
+struct Solid
 {
 	v3f pos;
 	Shader* shader = Shader::def_inst;
@@ -34,10 +34,10 @@ struct SDF
 	virtual void renderPreview(SDL_Renderer* r) = 0;
 };
 
-struct Sphere : SDF
+struct Sphere : Solid
 {
 	float radius = 1;
-	Sphere(v3f pos_= {}, float radius_ = 1) : SDF(), radius(radius_) { pos = pos_; }
+	Sphere(v3f pos_= {}, float radius_ = 1) : Solid(), radius(radius_) { pos = pos_; }
 	Intersection getIntersection(Ray ray) override
 	{	
 		v3f od = ray.ori-pos;
@@ -62,10 +62,10 @@ struct Sphere : SDF
 	}
 };
 
-struct Plane : SDF
+struct Plane : Solid
 {
 	v3f normal;
-	Plane(v3f pos_ = {}, v3f normal_ = {0,1,0}) : SDF(), normal(normal_) { pos = pos_; }
+	Plane(v3f pos_ = {}, v3f normal_ = {0,1,0}) : Solid(), normal(normal_) { pos = pos_; }
 	Intersection getIntersection(Ray ray) override
 	{
 		float dist = dot(pos-ray.ori, normal)/dot(ray.dir, normal);

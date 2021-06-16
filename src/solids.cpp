@@ -1,9 +1,9 @@
-#include "sdf.h"
+#include "solids.h"
 
 Shader* Shader::def_inst = new Shader_Def{};
 
 static constexpr size_t BOUNCE_COUNT = 4;
-SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection& o_i, uint32_t rec)
+SDL_Colour Shader_Def::getPixelValue(Solid *obj, const Ray& o_ray, const Intersection& o_i, uint32_t rec)
 {
 	FloatCol out = {0,0,0,1};
 	float& r = out.r;
@@ -25,7 +25,7 @@ SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersect
 		ray.dir = dir_light;
 
 		bool abstructed = 0;
-		for(SDF* obj_ : world)
+		for(Solid* obj_ : world)
 		{
 			Intersection i = obj_->getIntersection(ray);
 			if(i.intersecting)
@@ -44,7 +44,7 @@ SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersect
 	}
 
 	if(rec<BOUNCE_COUNT)
-		for(SDF* obj_ : world)
+		for(Solid* obj_ : world)
 		{
 			ray.dir = normal + dir_rough_offset;
 			Intersection i = obj_->getIntersection(ray);

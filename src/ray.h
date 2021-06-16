@@ -1,7 +1,7 @@
 #pragma once
 #include "operators.h"
 
-struct SDF;
+struct Solid;
 struct Ray
 {
 	v3f ori, dir;
@@ -12,5 +12,5 @@ struct Intersection
 	float min_dist;
 	float max_dist;
 	v3f normal;
-	SDF* sdf;
+	Solid* solid;
 };
