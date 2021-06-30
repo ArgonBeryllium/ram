@@ -12,7 +12,7 @@ struct Light
 };
 struct Shader
 {
-	static Shader* def_inst;
+	static Shader* def_inst; // default instance
 	virtual SDL_Colour getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
 };
 struct Shader_Def : Shader

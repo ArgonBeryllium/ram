@@ -14,11 +14,13 @@ static v2f getPlaneDims()
 v3f Camera::getPlaneCoord(const v2i &pp)
 {
 	v2f pd = getPlaneDims();
-	return pos+v3f{float(pp.x*2 - W)/W*pd.x, float(pp.y*2-H)/H*pd.y, plane_offset};
+	float dx = float(pp.x*2 - W)/W*pd.x, dy = float(pp.y*2-H)/H*pd.y;
+	return pos+v3f{dx, dy, plane_offset};
 }
 v3f Camera::getRayDir(const v2i &pp)
 {
 	float xs = float(pp.x*2 - W)/W;
 	float ys = float(pp.y*2 - H)/H;
-	return v3f{std::cos(fov/2*xs - M_PI_2f32), -std::cos(fov/2*ys - M_PI_2f32),std::min(1.f, std::sin(fov/2*ys - M_PI_2f32)*std::sin(fov/2*xs - M_PI_2f32))};
+	float xa = fov/2*xs - M_PI_2f32 + angles.y, ya = fov/2*ys - M_PI_2f32 + angles.x;
+	return v3f{std::cos(xa), -std::cos(ya),std::min(1.f, std::sin(ya)*std::sin(xa))};
 }

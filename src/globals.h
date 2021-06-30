@@ -3,7 +3,7 @@
 #include "operators.h"
 #include <vector>
 
-constexpr inline int RW = 540, RH = 480, PS=5,
+constexpr inline int RW = 540, RH = 480, PS=8,
 						W = RW/PS, H = RH/PS;
 
 struct Solid;

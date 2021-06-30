@@ -14,9 +14,9 @@ using namespace shitrndr;
 
 const static size_t num_samples = 1;
 
-SDL_Colour castRay(int x, int y, int seed = -1)
+SDL_Colour castRay(int x, int y, int seed)
 {
-	if(seed!=-1) std::srand(seed);
+	std::srand(seed);
 	SDL_Colour out = GI.col();
 
 	Ray ray = {Camera::getPlaneCoord({x,y}), Camera::getRayDir({x,y})};
@@ -58,16 +58,13 @@ v3f iv;
 int main()
 {
 	// rendering setup
-	{
-		init(".", RW, RH, 1, 0, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-		WindowProps::setPixScale(PS);
-		WindowProps::lock_type = WindowProps::BARS;
-		WindowProps::setLocked(1);
-		silentDefs();
-		initHelpers();
-
-		bg_col = {0,0,0,0};
-	}
+	init(".", RW, RH, 1, 0, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+	WindowProps::setPixScale(PS);
+	WindowProps::lock_type = WindowProps::BARS;
+	WindowProps::setLocked(1);
+	silentDefs();
+	initHelpers();
+	bg_col = {0,0,0,0};
 
 	Shader_Def red_n_shiny = Shader_Def();
 	red_n_shiny.col = {1,0,0,1};
@@ -106,8 +103,10 @@ int main()
 					((gk(SDLK_w) || gk(SDLK_UP))?1.f:0.f) - ((gk(SDLK_s) || gk(SDLK_DOWN))?1.f:0.f)};
 			Camera::pos += v3f{iv.x, Input::getKey(SDLK_LSHIFT)?iv.y:0, Input::getKey(SDLK_LSHIFT)?0:iv.y}*3*delta;
 
-			if(Input::getKey(SDLK_q)) Camera::angles.y += delta*2;
-			if(Input::getKey(SDLK_e)) Camera::angles.y -= delta*2;
+			if(Input::getKey(SDLK_j)) Camera::angles.y -= delta*2;
+			if(Input::getKey(SDLK_l)) Camera::angles.y += delta*2;
+			if(Input::getKey(SDLK_i)) Camera::angles.x -= delta*2;
+			if(Input::getKey(SDLK_k)) Camera::angles.x += delta*2;
 		}
 
 		// main loop

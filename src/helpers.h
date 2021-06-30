@@ -9,7 +9,7 @@
 using v2f = shitrndr::helpers::vec2<float>;
 using v2i = shitrndr::helpers::vec2<int>;
 
-inline float frand() { return float(std::rand())/RAND_MAX; }
+inline float frand() { return float(std::rand())/float(RAND_MAX); }
 inline float frange() { return (frand()*2)-1; }
 
 inline SDL_Window* owin;
