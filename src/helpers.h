@@ -3,7 +3,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <map>
 #include "operators.h"
-#include "globals.h"
 
 #define gk(X) shitrndr::Input::getKey(X)
 using v2f = shitrndr::helpers::vec2<float>;
@@ -12,6 +11,7 @@ using v2i = shitrndr::helpers::vec2<int>;
 inline float frand() { return float(std::rand())/float(RAND_MAX); }
 inline float frange() { return (frand()*2)-1; }
 
+#ifdef DEBUG_WINDOW
 inline SDL_Window* owin;
 inline SDL_Renderer* oren;
 
@@ -42,7 +42,9 @@ inline void initHelpers()
 	font = TTF_OpenFont("res/ProggyTiny.ttf", 25);
 
 	SDL_CreateWindowAndRenderer(256, 256, 0, &owin, &oren);
-	SDL_SetWindowPosition(owin, 960-RW/2-256,540-RH/2);
+	int w, h;
+	SDL_GetWindowPosition(shitrndr::win, &w, &h);
+	SDL_SetWindowPosition(owin, 960-w/2-256,540-h/2);
 	SDL_SetRenderDrawBlendMode(oren, SDL_BLENDMODE_BLEND);
 
 }
@@ -70,3 +72,4 @@ inline v2f getHelperDir(v3f d)
 {
 	return shitrndr::Input::getKey(SDLK_LSHIFT) ? v2f(d.z, -d.y)*8 : v2f(d.x, -d.z)*8;
 }
+#endif

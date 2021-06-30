@@ -42,7 +42,7 @@ inline void operator/=(MegaCol& a, const int& b) { a = a/b; }
 
 struct FloatCol
 {
-	float r = 1, g = 1, b = 1, a = 1;;
+	float r = 1, g = 1, b = 1, a = 1;
 	SDL_Colour col() const { return {Uint8(r*255), Uint8(g*255), Uint8(b*255), Uint8(a*255) }; }
 };
 

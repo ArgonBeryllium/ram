@@ -2,15 +2,24 @@
 #include "operators.h"
 #include "helpers.h"
 
+struct World;
 struct Camera
 {
-	static v3f pos;
-	static v3f angles;
-	static float fov;
-	static float plane_offset;
+	v3f pos = {0,0,-5};
+	v3f angles = {};
 
-	static void init();
+	float fov = M_PIf32/4;
+	float plane_offset = .2;
 
-	static v3f getPlaneCoord(const v2i& pp);
-	static v3f getRayDir(const v2i& pp);
+	v2i output_dims = {108, 96};
+
+	World* parent_world;
+
+	Camera(World* parent_world_) : parent_world(parent_world_) {}
+
+	v2f getPlaneDims();
+	v3f getPlaneCoord(const v2i& pp);
+	v3f getRayDir(const v2i& pp);
+
+	SDL_Colour castRay(int x, int y, int seed);
 };

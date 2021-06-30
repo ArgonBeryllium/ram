@@ -2,7 +2,6 @@
 #include "operators.h"
 #include "ray.h"
 #include "helpers.h"
-#include <shitrndr.h>
 
 struct Light
 {
@@ -24,20 +23,28 @@ struct Shader_Def : Shader
 	SDL_Colour getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
 };
 
+struct World;
 struct Solid
 {
 	v3f pos;
 	Shader* shader = Shader::def_inst;
+	World* parent_world;
+	Solid(World* parent_world_, v3f pos_) : parent_world(parent_world_), pos(pos_) {}
+
 	virtual Intersection getIntersection(Ray ray) = 0;
 	virtual v3f getNormal(v3f surface_point) = 0;
 
+	virtual ~Solid() {}
+
+#ifdef DEBUG_WINDOW
 	virtual void renderPreview(SDL_Renderer* r) = 0;
+#endif
 };
 
 struct Sphere : Solid
 {
 	float radius = 1;
-	Sphere(v3f pos_= {}, float radius_ = 1) : Solid(), radius(radius_) { pos = pos_; }
+	Sphere(World* parent_world_, v3f pos_= {}, float radius_ = 1) : Solid(parent_world_, pos_), radius(radius_) {}
 	Intersection getIntersection(Ray ray) override
 	{	
 		v3f od = ray.ori-pos;
@@ -55,26 +62,30 @@ struct Sphere : Solid
 	};
 	v3f getNormal(v3f surface_point) override { return (surface_point - pos).normalised(); }
 
+#ifdef DEBUG_WINDOW
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 
 		shitrndr::RenderDrawCircle(r, sp.x, sp.y, radius*8);
 	}
+#endif
 };
 
 struct Plane : Solid
 {
 	v3f normal;
-	Plane(v3f pos_ = {}, v3f normal_ = {0,1,0}) : Solid(), normal(normal_) { pos = pos_; }
+	Plane(World* parent_world_, v3f pos_ = {}, v3f normal_ = {0,1,0}) : Solid(parent_world_, pos_), normal(normal_) {}
 	Intersection getIntersection(Ray ray) override
 	{
 		float dist = dot(pos-ray.ori, normal)/dot(ray.dir, normal);
 		return Intersection{dist>0, dist, dist, normal, this};
 	}
 	v3f getNormal(v3f surface_point) override { return normal; }
+#ifdef DEBUG_WINDOW
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 
 		shitrndr::RenderFillCircle(oren, sp.x, sp.y, 4);
 	}
+#endif
 };

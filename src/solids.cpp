@@ -1,4 +1,5 @@
 #include "solids.h"
+#include "world.h"
 
 Shader* Shader::def_inst = new Shader_Def{};
 
@@ -18,14 +19,14 @@ SDL_Colour Shader_Def::getPixelValue(Solid *obj, const Ray& o_ray, const Interse
 	Ray ray = o_ray;
 	ray.ori = point_surf;
 	
-	for(Light* l : lights)
+	for(Light* l : obj->parent_world->lights)
 	{
 		v3f dir_light = (l->pos-point_surf).normalised() + dir_rough_offset;
 
 		ray.dir = dir_light;
 
 		bool abstructed = 0;
-		for(Solid* obj_ : world)
+		for(Solid* obj_ : obj->parent_world->solids)
 		{
 			Intersection i = obj_->getIntersection(ray);
 			if(i.intersecting)
@@ -44,7 +45,7 @@ SDL_Colour Shader_Def::getPixelValue(Solid *obj, const Ray& o_ray, const Interse
 	}
 
 	if(rec<BOUNCE_COUNT)
-		for(Solid* obj_ : world)
+		for(Solid* obj_ : obj->parent_world->solids)
 		{
 			ray.dir = normal + dir_rough_offset;
 			Intersection i = obj_->getIntersection(ray);
@@ -62,9 +63,9 @@ SDL_Colour Shader_Def::getPixelValue(Solid *obj, const Ray& o_ray, const Interse
 	b *= col.b;
 	a *= col.a;
 
-	r += GI.r;
-	g += GI.g;
-	b += GI.b;
+	r += obj->parent_world->global_illum.r;
+	g += obj->parent_world->global_illum.g;
+	b += obj->parent_world->global_illum.b;
 
 	r = std::max(0.f, std::min(1.f, r));
 	g = std::max(0.f, std::min(1.f, g));
