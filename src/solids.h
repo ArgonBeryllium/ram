@@ -36,7 +36,7 @@ struct Solid
 
 	virtual ~Solid() {}
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 	virtual void renderPreview(SDL_Renderer* r) = 0;
 #endif
 };
@@ -62,7 +62,7 @@ struct Sphere : Solid
 	};
 	v3f getNormal(v3f surface_point) override { return (surface_point - pos).normalised(); }
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 
@@ -81,7 +81,7 @@ struct Plane : Solid
 		return Intersection{dist>0, dist, dist, normal, this};
 	}
 	v3f getNormal(v3f surface_point) override { return normal; }
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 

@@ -1,3 +1,4 @@
+#define RAT_DEBUG
 #include "camera.h"
 #include "ray.h"
 #include "world.h"
@@ -28,9 +29,9 @@ SDL_Colour Camera::castRay(int x, int y, int seed)
 
 	Ray ray = {getPlaneCoord({x,y}), getRayDir({x,y})};
 
-#ifdef DEBUG_WINDOW
-	v2i ro = getoutput_dims.yelperCoords(ray.ori);
-	v2i re = ro+(getoutput_dims.yelperDir(ray.dir)*512).to<int>();
+#ifdef RAT_DEBUG
+	v2i ro = getHelperCoords(ray.ori);
+	v2i re = ro+(getHelperDir(ray.dir)*512).to<int>();
 	SetRenderColour(oren, {255,255,255,1});
 #endif
 
@@ -39,7 +40,7 @@ SDL_Colour Camera::castRay(int x, int y, int seed)
 	{
 		Intersection i = obj->getIntersection(ray);
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 		SetRenderColour(oren, {255,255,255,1});
 #endif
 		if(i.intersecting && i.min_dist>0 && i.min_dist<sd)
@@ -47,16 +48,16 @@ SDL_Colour Camera::castRay(int x, int y, int seed)
 			sd = i.min_dist;
 			out = obj->shader->getPixelValue(obj, ray, i);
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 			SetRenderColour(oren, {255,0,0,1});
 #endif
 		}
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 		SDL_RenderDrawLine(oren, ro.x, ro.y, re.x, re.y);
 #endif
 	}
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 	SetRenderColour(oren, {255,255,255,255});
 #endif
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include <limits.h>
 
-#define DEBUG_WINDOW
+#define RAT_DEBUG
 #include "operators.h"
 #include "helpers.h"
 #include "camera.h"
@@ -15,7 +15,6 @@ const static size_t num_samples = 1;
 constexpr int RW = 540, RH = 480, PS=5,
 						W = RW/PS, H = RH/PS;
 World world;
-
 
 SDL_Colour getPixelColour(int x, int y)
 {
@@ -37,7 +36,7 @@ int main()
 	silentDefs();
 	bg_col = {0,0,0,0};
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 	initHelpers();
 #endif
 
@@ -58,7 +57,7 @@ int main()
 
 	onRender = [](double delta, double time)
 	{
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 		SDL_SetRenderDrawColor(oren, 25, 5, 35, 255);
 		SDL_RenderClear(oren);
 		SetRenderColour(oren, {255,255,255,255});
@@ -96,7 +95,7 @@ int main()
 				SDL_RenderDrawPoint(ren, x, y);
 			}
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 		renderFPS(time, delta);
 
 		v2i cp = getHelperCoords(world.cam->pos);

@@ -11,7 +11,7 @@ using v2i = shitrndr::helpers::vec2<int>;
 inline float frand() { return float(std::rand())/float(RAND_MAX); }
 inline float frange() { return (frand()*2)-1; }
 
-#ifdef DEBUG_WINDOW
+#ifdef RAT_DEBUG
 inline SDL_Window* owin;
 inline SDL_Renderer* oren;
 
