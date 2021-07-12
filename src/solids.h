@@ -1,5 +1,7 @@
 #pragma once
 #include "operators.h"
+#include "vec3.h"
+#include "colours.h"
 #include "ray.h"
 #include "helpers.h"
 

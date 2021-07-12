@@ -1,6 +1,7 @@
 #pragma once
 #include "operators.h"
 #include "helpers.h"
+#include "vec3.h"
 
 struct World;
 struct Camera

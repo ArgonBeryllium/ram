@@ -12,6 +12,7 @@ inline float frand() { return float(std::rand())/float(RAND_MAX); }
 inline float frange() { return (frand()*2)-1; }
 
 #ifdef RAT_DEBUG
+#include "vec3.h"
 inline SDL_Window* owin;
 inline SDL_Renderer* oren;
 

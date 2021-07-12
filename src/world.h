@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "camera.h"
+#include "colours.h"
 #include "solids.h"
 
 struct World

@@ -1,5 +1,6 @@
 #pragma once
 #include "operators.h"
+#include "vec3.h"
 
 struct Solid;
 struct Ray
