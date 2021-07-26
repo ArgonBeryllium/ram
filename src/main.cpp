@@ -3,12 +3,7 @@
 #include <limits.h>
 
 #define RAT_DEBUG
-#include "operators.h"
-#include "helpers.h"
-#include "camera.h"
-#include "ray.h"
-#include "solids.h"
-#include "world.h"
+#include "rat.h"
 using namespace shitrndr;
 
 constexpr int RW = 540, RH = 480, PS = 5, W = RW/PS, H = RH/PS;
