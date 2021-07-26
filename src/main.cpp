@@ -12,7 +12,7 @@ World world;
 v3f iv;
 int main()
 {
-	// rendering setup
+	// shitrndr setup //
 	init(".", RW, RH, 1, 0, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	WindowProps::setPixScale(PS);
 	WindowProps::lock_type = WindowProps::BARS;
@@ -24,6 +24,7 @@ int main()
 	initHelpers();
 	#endif
 	
+	// scene setup //
 	world.cam->output_dims.x = W;
 	world.cam->output_dims.y = H;
 	
@@ -42,6 +43,7 @@ int main()
 	world.lights.push_back(new Light{{}, 10});
 	world.lights.push_back(new Light{{-20, 20, -4}, 400.f, {1, .9, .8}});
 	
+	// main loop
 	onRender = [](double delta, double time)
 	{
 		#ifdef RAT_DEBUG
@@ -74,7 +76,6 @@ int main()
 			if(Input::getKey(SDLK_k)) world.cam->angles.x += delta*2;
 		}
 		
-		// main loop
 		std::srand(time*9999);
 		world.cam->renderFrame();
 		
