@@ -3,6 +3,25 @@
 #include "ray.h"
 #include "world.h"
 
+void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
+{
+	int rw = rect?rect->w:output_dims.x;
+	int rh = rect?rect->h:output_dims.y;
+	for (int y = 0; y != rw; y++)
+		for (int x = 0; x != rh; x++)
+		{
+			MegaCol col;
+			for (size_t i = 0; i != samples; i++)
+				col += castRay(x/float(rw)*output_dims.x, y/float(rh)*output_dims.y, x+y*output_dims.x+std::rand()+i);
+			col /= samples;
+			SDL_Colour pix = col.col();
+			
+			if(pix.a==0) continue;
+			SDL_SetRenderDrawColor(target, pix.r, pix.g, pix.b, pix.a);
+			SDL_RenderDrawPoint(target, x, y);
+		}
+}
+
 v2f Camera::getPlaneDims()
 {
 	return v2f{std::tan(Camera::fov/2 - M_PI_2f32), -float(output_dims.y)/output_dims.x*std::tan(Camera::fov/2 - M_PI_2f32)}*Camera::plane_offset*-2;
