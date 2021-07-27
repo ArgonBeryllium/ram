@@ -15,6 +15,7 @@ inline float frange() { return (frand()*2)-1; }
 #include "vec3.h"
 inline SDL_Window* owin;
 inline SDL_Renderer* oren;
+inline float oscale=16;
 
 inline TTF_Font* font;
 inline void renderText(const std::string& text, int x, int y, bool cache = 0, SDL_Colour col = {255,255,255,255}, SDL_Renderer* r = oren)
@@ -40,7 +41,7 @@ inline void renderText(const std::string& text, int x, int y, bool cache = 0, SD
 inline void initHelpers()
 {
 	TTF_Init();
-	font = TTF_OpenFont("res/ProggyTiny.ttf", 25);
+	font = TTF_OpenFont("res/ProggyTiny.ttf", 30);
 
 	SDL_CreateWindowAndRenderer(256, 256, 0, &owin, &oren);
 	int w, h;
@@ -67,10 +68,10 @@ inline void renderFPS(float time, float delta)
 }
 inline v2i getHelperCoords(v3f p)
 {
-	return shitrndr::Input::getKey(SDLK_LSHIFT) ? (v2f(p.z, -p.y)*8 + v2f{128,128}).to<int>() : (v2f(p.x, -p.z)*8 + v2f{128,128}).to<int>();
+	return shitrndr::Input::getKey(SDLK_LSHIFT) ? (v2f(p.z, -p.y)*oscale + v2f{128,128}).to<int>() : (v2f(p.x, -p.z)*oscale + v2f{128,128}).to<int>();
 }
 inline v2f getHelperDir(v3f d)
 {
-	return shitrndr::Input::getKey(SDLK_LSHIFT) ? v2f(d.z, -d.y)*8 : v2f(d.x, -d.z)*8;
+	return shitrndr::Input::getKey(SDLK_LSHIFT) ? v2f(d.z, -d.y)*oscale : v2f(d.x, -d.z)*oscale;
 }
 #endif

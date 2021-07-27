@@ -38,9 +38,9 @@ struct Solid
 
 	virtual ~Solid() {}
 
-#ifdef RAT_DEBUG
+	#ifdef RAT_DEBUG
 	virtual void renderPreview(SDL_Renderer* r) = 0;
-#endif
+	#endif
 };
 
 struct Sphere : Solid
@@ -48,13 +48,13 @@ struct Sphere : Solid
 	float radius = 1;
 	Sphere(World* parent_world_, v3f pos_= {}, float radius_ = 1) : Solid(parent_world_, pos_), radius(radius_) {}
 	Intersection getIntersection(Ray ray) override
-	{	
+	{
 		v3f od = ray.ori-pos;
 		float b = dot(ray.dir, od);
 		float fac = dot(od, od) - radius*radius;
 		float d = b*b - fac;
 		if(d<0) return {0};
-    
+		
 		float d1, d2;
 		d1 = -b + std::sqrt(d);
 		d2 = -b - std::sqrt(d);
@@ -64,13 +64,13 @@ struct Sphere : Solid
 	};
 	v3f getNormal(v3f surface_point) override { return (surface_point - pos).normalised(); }
 
-#ifdef RAT_DEBUG
+	#ifdef RAT_DEBUG
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 
-		shitrndr::RenderDrawCircle(r, sp.x, sp.y, radius*8);
+		shitrndr::RenderDrawCircle(r, sp.x, sp.y, radius*oscale);
 	}
-#endif
+	#endif
 };
 
 struct Plane : Solid
@@ -83,11 +83,11 @@ struct Plane : Solid
 		return Intersection{dist>0, dist, dist, normal, this};
 	}
 	v3f getNormal(v3f surface_point) override { return normal; }
-#ifdef RAT_DEBUG
+	#ifdef RAT_DEBUG
 	void renderPreview(SDL_Renderer* r) override
 	{
 		v2i sp = getHelperCoords(pos); 
 		shitrndr::RenderFillCircle(oren, sp.x, sp.y, 4);
 	}
-#endif
+	#endif
 };
