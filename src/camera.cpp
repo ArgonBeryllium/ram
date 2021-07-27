@@ -7,8 +7,8 @@ void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
 {
 	int rw = rect?rect->w:output_dims.x;
 	int rh = rect?rect->h:output_dims.y;
-	for (int y = 0; y != rw; y++)
-		for (int x = 0; x != rh; x++)
+	for (int y = 0; y != rh; y++)
+		for (int x = 0; x != rw; x++)
 		{
 			MegaCol col;
 			for (size_t i = 0; i != samples; i++)
