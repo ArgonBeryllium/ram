@@ -31,13 +31,13 @@ int main()
 		world.cam->output_dims.x = W;
 		world.cam->output_dims.y = H;
 		
-		Shader_Def red_n_shiny = Shader_Def();
-		red_n_shiny.col = {1,0,0,1};
-		red_n_shiny.smooth = .8;
-		red_n_shiny.reflective = .9;
+		Shader_Def* red_n_shiny = new Shader_Def();
+		red_n_shiny->col = {1,0,0,1};
+		red_n_shiny->smooth = .8;
+		red_n_shiny->reflective = .9;
 		
 		world.solids.push_back(new Sphere(&world));
-		world.solids[0]->shader  = &red_n_shiny;
+		world.solids[0]->shader = red_n_shiny;
 		
 		world.solids.push_back(new Sphere(&world, {0,-5,0}, 3));
 		world.solids.push_back(new Sphere(&world, {0,-3,4}, 3));
