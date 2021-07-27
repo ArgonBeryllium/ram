@@ -5,8 +5,21 @@
 
 void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
 {
-	int rw = rect?rect->w:output_dims.x;
-	int rh = rect?rect->h:output_dims.y;
+	int rw, rh, xo, yo;
+	if(rect)
+	{
+		rw = rect->w;
+		rh = rect->h;
+		xo = rect->x;
+		yo = rect->y;
+	}
+	else
+	{
+		rw = output_dims.x;
+		rh = output_dims.y;
+		xo = yo = 0;
+	}
+
 	for (int y = 0; y != rh; y++)
 		for (int x = 0; x != rw; x++)
 		{
@@ -18,7 +31,7 @@ void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
 			
 			if(pix.a==0) continue;
 			SDL_SetRenderDrawColor(target, pix.r, pix.g, pix.b, pix.a);
-			SDL_RenderDrawPoint(target, x, y);
+			SDL_RenderDrawPoint(target, x+xo, y+yo);
 		}
 }
 
@@ -45,40 +58,35 @@ SDL_Colour Camera::castRay(int x, int y, int seed)
 	using namespace shitrndr;
 	std::srand(seed);
 	SDL_Colour out = parent_world->global_illum.col();
-
+	
 	Ray ray = {getPlaneCoord({x,y}), getRayDir({x,y})};
-
-#ifdef RAT_DEBUG
+	
+	#ifdef RAT_DEBUG
 	v2i ro = getHelperCoords(ray.ori);
 	v2i re = ro+(getHelperDir(ray.dir)*512).to<int>();
 	SetRenderColour(oren, {255,255,255,1});
-#endif
-
+	#endif
+	
 	float sd = MAXFLOAT;
 	for(Solid* obj : parent_world->solids)
 	{
 		Intersection i = obj->getIntersection(ray);
-
-#ifdef RAT_DEBUG
-		SetRenderColour(oren, {255,255,255,1});
-#endif
+		
 		if(i.intersecting && i.min_dist>0 && i.min_dist<sd)
 		{
 			sd = i.min_dist;
 			out = obj->shader->getPixelValue(obj, ray, i);
-
-#ifdef RAT_DEBUG
+			
+			#ifdef RAT_DEBUG
 			SetRenderColour(oren, {255,0,0,1});
-#endif
+			#endif
 		}
-
-#ifdef RAT_DEBUG
-		SDL_RenderDrawLine(oren, ro.x, ro.y, re.x, re.y);
-#endif
 	}
-#ifdef RAT_DEBUG
+	
+	#ifdef RAT_DEBUG
+	SDL_RenderDrawLine(oren, ro.x, ro.y, re.x, re.y);
 	SetRenderColour(oren, {255,255,255,255});
-#endif
-
+	#endif
+	
 	return out;
 }
