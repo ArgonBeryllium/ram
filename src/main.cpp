@@ -16,7 +16,7 @@ int main()
 	{
 		init(".", RW, RH, 1, 0, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		WindowProps::setPixScale(PS);
-		WindowProps::lock_type = WindowProps::BARS;
+		WindowProps::setLockType(WindowProps::BARS);
 		WindowProps::setLocked(1);
 		silentDefs();
 		bg_col = {0,0,0,0};
@@ -61,8 +61,8 @@ int main()
 		
 		// animations //
 		{
-			world.lights[0]->col.r = std::abs(std::sin(time))*10;
-			world.lights[0]->col.g = std::abs(std::cos(time))*10;
+			world.lights[0]->col.r = std::abs(std::sin(time))  *10;
+			world.lights[0]->col.g = std::abs(std::cos(time))  *10;
 			world.lights[0]->col.b = std::abs(std::sin(time+1))*10;
 			
 			world.lights[0]->pos.x = std::cos(time)*5;
