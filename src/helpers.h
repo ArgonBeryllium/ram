@@ -15,7 +15,7 @@ inline float frange() { return (frand()*2)-1; }
 #include "vec3.h"
 inline SDL_Window* owin;
 inline SDL_Renderer* oren;
-inline float oscale=16;
+inline float oscale=6;
 
 inline TTF_Font* font;
 inline void renderText(const std::string& text, int x, int y, bool cache = 0, SDL_Colour col = {255,255,255,255}, SDL_Renderer* r = oren)
@@ -66,12 +66,14 @@ inline void renderFPS(float time, float delta)
 	renderText("("+std::to_string(delta)+")", 0, 30);
 	renderText("___________", 0, 40);
 }
-inline v2i getHelperCoords(v3f p)
-{
-	return shitrndr::Input::getKey(SDLK_LSHIFT) ? (v2f(p.z, -p.y)*oscale + v2f{128,128}).to<int>() : (v2f(p.x, -p.z)*oscale + v2f{128,128}).to<int>();
-}
 inline v2f getHelperDir(v3f d)
 {
-	return shitrndr::Input::getKey(SDLK_LSHIFT) ? v2f(d.z, -d.y)*oscale : v2f(d.x, -d.z)*oscale;
+	if(shitrndr::Input::getKey(SDLK_LSHIFT)) return v2f(d.z, -d.y)*oscale;
+	if(shitrndr::Input::getKey(SDLK_LCTRL)) return v2f(d.x, -d.y)*oscale;
+	return v2f(d.x, -d.z)*oscale;
+}
+inline v2i getHelperCoords(v3f p)
+{
+	return getHelperDir(p).to<int>()+v2i{128,128};
 }
 #endif

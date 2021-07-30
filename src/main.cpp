@@ -1,3 +1,5 @@
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_render.h>
 #include <shitrndr.h>
 #include <vector>
 #include <limits.h>
@@ -42,6 +44,8 @@ int main()
 		world.solids.push_back(new Sphere(&world, {0,-5,0}, 3));
 		world.solids.push_back(new Sphere(&world, {0,-3,4}, 3));
 		world.solids.push_back(new Plane(&world, {0,-3,0}));
+
+		world.solids.push_back(new Sphere(&world, {-6,0,-5}, 3));
 		
 		world.lights.push_back(new Light{{}, 10});
 		world.lights.push_back(new Light{{-20, 20, -4}, 400.f, {1, .9, .8}});
@@ -82,6 +86,8 @@ int main()
 			if(Input::getKey(SDLK_l)) world.cam->angles.y += delta*2;
 			if(Input::getKey(SDLK_i)) world.cam->angles.x -= delta*2;
 			if(Input::getKey(SDLK_k)) world.cam->angles.x += delta*2;
+
+			//world.cam->plane_offset = float(Input::getMP().y)*5*5/H;
 		}
 		
 		std::srand(time*10000); // otherwise every frame it'd remain set to the last pixel's seed
@@ -91,9 +97,17 @@ int main()
 		{
 			#ifdef RAT_DEBUG
 			renderFPS(time, delta);
+			renderText(std::to_string(world.cam->plane_offset), 10, 60);
+			renderText(std::to_string(world.cam->fov), 10, 80);
 			
 			v2i cp = getHelperCoords(world.cam->pos);
 			RenderFillCircle(oren, cp.x, cp.y, 2);
+			SDL_SetRenderDrawColor(oren, 255, 0, 0, 255);
+			v2i co = getHelperCoords(world.cam->pos-v3f{0,0,world.cam->plane_offset});
+			RenderFillCircle(oren, co.x, co.y, 2);
+			SDL_RenderDrawLine(oren, co.x, co.y, cp.x, cp.y);
+
+			SDL_SetRenderDrawColor(oren, 255, 255, 255, 255);
 			for(Solid* obj : world.solids)
 				obj->renderPreview(oren);
 			
@@ -108,6 +122,20 @@ int main()
 	{
 		if(key==SDLK_q) std::exit(0);
 	};
+	#ifdef RAT_DEBUG
+	onEvent = [](SDL_Event* e)
+	{
+		switch(e->type)
+		{
+			case SDL_MOUSEWHEEL :
+				if(e->wheel.y>0)
+					oscale *= 1.5;
+				else
+					oscale /= 1.5;
+				break;
+		}
+	};
+	#endif
 	
 	loop();
 	return 0;
