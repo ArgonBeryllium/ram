@@ -1,3 +1,4 @@
+#include <cmath>
 #define RAT_DEBUG
 #include "camera.h"
 #include "ray.h"
@@ -35,22 +36,22 @@ void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
 		}
 }
 
-v2f Camera::getPlaneDims()
+inline v2f Camera::getPlaneDims()
 {
-	return v2f{std::tan(Camera::fov/2 - M_PI_2f32), -float(output_dims.y)/output_dims.x*std::tan(Camera::fov/2 - M_PI_2f32)}*Camera::plane_offset*-2;
+	return v2f{1, -float(output_dims.x)/output_dims.y}*std::atan(fov/2)*2*plane_offset;
 }
 v3f Camera::getPlaneCoord(const v2i &pp)
 {
 	v2f pd = getPlaneDims();
 	float dx = float(pp.x*2 - output_dims.x)/output_dims.x*pd.x, dy = float(pp.y*2-output_dims.y)/output_dims.y*pd.y;
-	return pos+v3f{dx, dy, plane_offset};
+	return pos+v3f{dx, dy, 0};
 }
 v3f Camera::getRayDir(const v2i &pp)
 {
-	float xs = float(pp.x*2 -output_dims.x)/output_dims.x;
+	float xs = float(pp.x*2 - output_dims.x)/output_dims.x * float(output_dims.x)/output_dims.y;
 	float ys = float(pp.y*2 - output_dims.y)/output_dims.y;
-	float xa = fov/2*xs - M_PI_2f32 + angles.y, ya = fov/2*ys - M_PI_2f32 + angles.x;
-	return v3f{std::cos(xa), -std::cos(ya),std::min(1.f, std::sin(ya)*std::sin(xa))};
+	float tfot = std::tan(fov/2);
+	return v3f{xs*tfot, -ys*tfot, 1}.normalised();
 }
 
 SDL_Colour Camera::castRay(int x, int y, int seed)

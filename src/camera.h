@@ -9,8 +9,8 @@ struct Camera
 	v3f pos = {0,0,-5};
 	v3f angles = {};
 	
-	float fov = M_PIf32/4;
-	float plane_offset = .2;
+	float fov = M_PIf32/2;
+	float plane_offset = .5;
 	
 	v2i output_dims = {108, 96};
 	
