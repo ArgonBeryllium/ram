@@ -23,7 +23,7 @@ void Camera::renderFrame(SDL_Rect* rect, SDL_Renderer* target)
 	for (int y = 0; y != rh; y++)
 		for (int x = 0; x != rw; x++)
 		{
-			SDL_Colour pix = castRay(x/float(rw)*output_dims.x, y/float(rh)*output_dims.y, x+y*output_dims.x);
+			SDL_Colour pix = castRay(x/float(rw)*output_dims.x, y/float(rh)*output_dims.y, x+y*output_dims.x).col();
 			SDL_SetRenderDrawColor(target, pix.r, pix.g, pix.b, pix.a);
 			SDL_RenderDrawPoint(target, x+xo, y+yo);
 		}
@@ -47,11 +47,11 @@ v3f Camera::getRayDir(const v2i &pp)
 	return rotatePoint(v3f{xs*tfot, -ys*tfot, 1}, angles).normalised();
 }
 
-SDL_Colour Camera::castRay(int x, int y, int seed)
+FloatCol Camera::castRay(int x, int y, int seed)
 {
 	using namespace shitrndr;
 	std::srand(seed);
-	SDL_Colour out = parent_world->global_illum.col();
+	FloatCol out = parent_world->global_illum;
 	
 	Ray ray = {getPlaneCoord({x,y}), getRayDir({x,y})};
 	
