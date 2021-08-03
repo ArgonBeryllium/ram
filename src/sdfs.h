@@ -17,7 +17,7 @@ struct Intersection;
 struct Shader
 {
 	static Shader* def_inst; // default instance
-	virtual SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
+	virtual FloatCol getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
 };
 struct Shader_Def : Shader
 {
@@ -26,7 +26,7 @@ struct Shader_Def : Shader
 	float reflective = .1;
 	float ambient_occlusion = .02;
 	
-	SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
+	FloatCol getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
 };
 
 struct World;

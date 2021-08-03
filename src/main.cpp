@@ -44,12 +44,12 @@ int main()
 
 		struct S_Checkerboard : Shader_Def
 		{
-			SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &o_i, uint32_t rec) override
+			FloatCol getPixelValue(SDF* obj, const Ray &ray, const Intersection &o_i, uint32_t rec) override
 			{
-				SDL_Colour out;
+				FloatCol out;
 				out = Shader_Def::getPixelValue(obj, ray, o_i, rec);
 					
-				out *= std::abs(int(o_i.surf_point.x+10000)+int(o_i.surf_point.z+10000))%2;
+				out *= std::max(.2f, float(std::abs(int(o_i.surf_point.x+10000)+int(o_i.surf_point.z+10000))%2));
 				return out;
 			};
 		};
