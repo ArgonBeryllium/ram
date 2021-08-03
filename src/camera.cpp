@@ -3,7 +3,7 @@
 #include "ray.h"
 #include "world.h"
 
-void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
+void Camera::renderFrame(SDL_Rect* rect, SDL_Renderer* target)
 {
 	int rw, rh, xo, yo;
 	if(rect)
@@ -23,13 +23,7 @@ void Camera::renderFrame(SDL_Rect* rect, size_t samples, SDL_Renderer* target)
 	for (int y = 0; y != rh; y++)
 		for (int x = 0; x != rw; x++)
 		{
-			MegaCol col;
-			for (size_t i = 0; i != samples; i++)
-				col += castRay(x/float(rw)*output_dims.x, y/float(rh)*output_dims.y, x+y*output_dims.x+std::rand()+i);
-			col /= samples;
-			SDL_Colour pix = col.col();
-			
-			if(pix.a==0) continue;
+			SDL_Colour pix = castRay(x/float(rw)*output_dims.x, y/float(rh)*output_dims.y, x+y*output_dims.x);
 			SDL_SetRenderDrawColor(target, pix.r, pix.g, pix.b, pix.a);
 			SDL_RenderDrawPoint(target, x+xo, y+yo);
 		}
@@ -61,29 +55,23 @@ SDL_Colour Camera::castRay(int x, int y, int seed)
 	
 	Ray ray = {getPlaneCoord({x,y}), getRayDir({x,y})};
 	
-	#ifdef RAT_DEBUG
+	#ifdef RAM_DEBUG
 	v2i ro = getHelperCoords(ray.ori);
 	v2i re = ro+(getHelperDir(ray.dir)*512).to<int>();
 	SetRenderColour(oren, {255,255,255,1});
 	#endif
 	
-	float sd = MAXFLOAT;
-	for(Solid* obj : parent_world->solids)
+	Intersection i = ray.march(parent_world);
+	if(i.intersecting)
 	{
-		Intersection i = obj->getIntersection(ray);
+		out = i.sdf->shader->getPixelValue(i.sdf, ray, i);
 		
-		if(i.intersecting && i.min_dist>0 && i.min_dist<sd)
-		{
-			sd = i.min_dist;
-			out = obj->shader->getPixelValue(obj, ray, i);
-			
-			#ifdef RAT_DEBUG
-			SetRenderColour(oren, {255,0,0,1});
-			#endif
-		}
+		#ifdef RAM_DEBUG
+		SetRenderColour(oren, {255,0,0,1});
+		#endif
 	}
 	
-	#ifdef RAT_DEBUG
+	#ifdef RAM_DEBUG
 	SDL_RenderDrawLine(oren, ro.x, ro.y, re.x, re.y);
 	SetRenderColour(oren, {255,255,255,255});
 	#endif

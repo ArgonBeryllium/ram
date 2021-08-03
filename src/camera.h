@@ -18,7 +18,7 @@ struct Camera
 	
 	Camera(World* parent_world_) : parent_world(parent_world_) {}
 	
-	void renderFrame(SDL_Rect* rect = 0, size_t samples = 1, SDL_Renderer* target = shitrndr::ren);
+	void renderFrame(SDL_Rect* rect = 0, SDL_Renderer* target = shitrndr::ren);
 	
 	v2f getPlaneDims();
 	v3f getPlaneCoord(const v2i& pp);

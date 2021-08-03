@@ -1,10 +1,6 @@
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_render.h>
 #include <shitrndr.h>
 #include <vector>
-#include <limits.h>
-
-#include "rat.h"
+#include "ram.h"
 using namespace shitrndr;
 
 constexpr int RW = 540, RH = 480, PS = 5, W = RW/PS, H = RH/PS;
@@ -23,7 +19,7 @@ int main()
 		bg_col = {0,0,0,0};
 	}
 	
-	#ifdef RAT_DEBUG
+	#ifdef RAM_DEBUG
 	initHelpers();
 	#endif
 	
@@ -37,14 +33,13 @@ int main()
 		red_n_shiny->smooth = .8;
 		red_n_shiny->reflective = .9;
 		
-		world.solids.push_back(new Sphere(&world));
-		world.solids[0]->shader = red_n_shiny;
+		world.sdfs.push_back(new Sphere(&world));
+		world.sdfs[0]->shader = red_n_shiny;
 		
-		world.solids.push_back(new Sphere(&world, {0,-5,0}, 3));
-		world.solids.push_back(new Sphere(&world, {0,-3,4}, 3));
-		world.solids.push_back(new Plane(&world, {0,-3,0}));
-
-		world.solids.push_back(new Sphere(&world, {-6,0,-5}, 3));
+		world.sdfs.push_back(new Cuboid(&world, {0,-2.5,0}, {3,1,3}));
+		world.sdfs.push_back(new Sphere(&world, {0,-3,4}, 3));
+		world.sdfs.push_back(new Cuboid(&world, {0,-3.5,0}, {50,1,50}));
+		world.sdfs.push_back(new Sphere(&world, {-6,0,-5}, 3));
 		
 		world.lights.push_back(new Light{{}, 10});
 		world.lights.push_back(new Light{{-20, 20, -4}, 400.f, {1, .9, .8}});
@@ -55,7 +50,7 @@ int main()
 	{
 		// debug window stuff
 		{
-			#ifdef RAT_DEBUG
+			#ifdef RAM_DEBUG
 			SDL_SetRenderDrawColor(oren, 25, 5, 35, 255);
 			SDL_RenderClear(oren);
 			SetRenderColour(oren, {255,255,255,255});
@@ -72,7 +67,7 @@ int main()
 			world.lights[0]->pos.y = std::cos(time)*2 + 1;
 			world.lights[0]->pos.z = std::sin(time)*5;
 			
-			world.solids[0]->pos.y = std::sin(time+.2);
+			world.sdfs[0]->pos.y = std::sin(time+.2);
 		}
 		
 		// camera controls //
@@ -97,7 +92,7 @@ int main()
 		
 		// more debug window stuff
 		{
-			#ifdef RAT_DEBUG
+			#ifdef RAM_DEBUG
 			renderFPS(time, delta);
 			
 			v2i cp = getHelperCoords(world.cam->pos);
@@ -108,8 +103,8 @@ int main()
 			SDL_RenderDrawLine(oren, co.x, co.y, cp.x, cp.y);
 
 			SDL_SetRenderDrawColor(oren, 255, 255, 255, 255);
-			for(Solid* obj : world.solids)
-				obj->renderPreview(oren);
+			for(SDF* sdf : world.sdfs)
+				sdf->renderPreview(oren);
 			
 			v2i slp = getHelperCoords(world.lights[0]->pos);
 			RenderFillCircle(oren, slp.x, slp.y, 2);
@@ -122,7 +117,7 @@ int main()
 	{
 		if(key==SDLK_q) std::exit(0);
 	};
-	#ifdef RAT_DEBUG
+	#ifdef RAM_DEBUG
 	onEvent = [](SDL_Event* e)
 	{
 		switch(e->type)

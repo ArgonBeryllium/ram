@@ -1,5 +1,5 @@
 #pragma once
-#define RAT_DEBUG
+#define RAM_DEBUG
 
 #include <shitrndr.h>
 #include <SDL2/SDL_ttf.h>
@@ -13,7 +13,7 @@ using v2i = shitrndr::helpers::vec2<int>;
 inline float frand() { return float(std::rand())/float(RAND_MAX); }
 inline float frange() { return (frand()*2)-1; }
 
-#ifdef RAT_DEBUG
+#ifdef RAM_DEBUG
 #include "vec3.h"
 inline SDL_Window* owin;
 inline SDL_Renderer* oren;

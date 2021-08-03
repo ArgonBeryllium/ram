@@ -3,5 +3,5 @@
 #include "helpers.h"
 #include "camera.h"
 #include "ray.h"
-#include "solids.h"
+#include "sdfs.h"
 #include "world.h"
