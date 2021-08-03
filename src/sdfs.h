@@ -22,8 +22,8 @@ struct Shader
 struct Shader_Def : Shader
 {
 	FloatCol col = {1,1,1,1};
-	float smooth = .3;
-	float reflective = .2;
+	float smooth = .2;
+	float reflective = .1;
 	float ambient_occlusion = .02;
 	
 	SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;

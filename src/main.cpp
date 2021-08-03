@@ -28,21 +28,36 @@ int main()
 		world.cam->output_dims.x = W;
 		world.cam->output_dims.y = H;
 		
+		world.sdfs.push_back(new Sphere(&world));
+		world.sdfs.push_back(new Cuboid(&world, {0,-2.5,0}, {3,1,3}));
+		world.sdfs.push_back(new Sphere(&world, {0,-3,4}, 3));
+		world.sdfs.push_back(new Cuboid(&world, {0,-3.5,0}, {100,1,100}));
+		world.sdfs.push_back(new Sphere(&world, {-8,0,3}, 3));
+
 		Shader_Def* red_n_shiny = new Shader_Def();
 		red_n_shiny->col = {1,0,0,1};
 		red_n_shiny->smooth = .8;
 		red_n_shiny->reflective = .9;
-		
-		world.sdfs.push_back(new Sphere(&world));
 		world.sdfs[0]->shader = red_n_shiny;
+
+		((Cuboid*)world.sdfs[1])->rounding = .2;
+
+		struct S_Checkerboard : Shader_Def
+		{
+			SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &o_i, uint32_t rec) override
+			{
+				SDL_Colour out;
+				out = Shader_Def::getPixelValue(obj, ray, o_i, rec);
+					
+				out *= std::abs(int(o_i.surf_point.x+10000)+int(o_i.surf_point.z+10000))%2;
+				return out;
+			};
+		};
+		world.sdfs[3]->shader = new S_Checkerboard();
 		
-		world.sdfs.push_back(new Cuboid(&world, {0,-2.5,0}, {3,1,3}));
-		world.sdfs.push_back(new Sphere(&world, {0,-3,4}, 3));
-		world.sdfs.push_back(new Cuboid(&world, {0,-3.5,0}, {50,1,50}));
-		world.sdfs.push_back(new Sphere(&world, {-6,0,-5}, 3));
-		
-		world.lights.push_back(new Light{{}, 10});
-		world.lights.push_back(new Light{{-20, 20, -4}, 400.f, {1, .9, .8}});
+		world.lights.push_back(new Light{{-2, 2, -3}, 8, {.3, .4, 1}});
+		world.lights.push_back(new Light{{6, -1, -4}, 5});
+		world.lights.push_back(new Light{{-4.5, 9, 7}, 30, {.9, .6, .1}});
 	}
 	
 	// main loop
@@ -59,14 +74,6 @@ int main()
 		
 		// animations //
 		{
-			world.lights[0]->col.r = std::abs(std::sin(time))  *10;
-			world.lights[0]->col.g = std::abs(std::cos(time))  *10;
-			world.lights[0]->col.b = std::abs(std::sin(time+1))*10;
-			
-			world.lights[0]->pos.x = std::cos(time)*5;
-			world.lights[0]->pos.y = std::cos(time)*2 + 1;
-			world.lights[0]->pos.z = std::sin(time)*5;
-			
 			world.sdfs[0]->pos.y = std::sin(time+.2);
 		}
 		
@@ -101,13 +108,16 @@ int main()
 			v2i co = getHelperCoords(world.cam->pos-v3f{0,0,world.cam->plane_offset});
 			RenderFillCircle(oren, co.x, co.y, 2);
 			SDL_RenderDrawLine(oren, co.x, co.y, cp.x, cp.y);
-
+			
 			SDL_SetRenderDrawColor(oren, 255, 255, 255, 255);
 			for(SDF* sdf : world.sdfs)
 				sdf->renderPreview(oren);
 			
-			v2i slp = getHelperCoords(world.lights[0]->pos);
-			RenderFillCircle(oren, slp.x, slp.y, 2);
+			for(Light* l : world.lights)
+			{
+				v2i slp = getHelperCoords(l->pos);
+				RenderFillCircle(oren, slp.x, slp.y, 2);
+			}
 			
 			SDL_RenderPresent(oren);
 			#endif
