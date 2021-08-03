@@ -4,7 +4,6 @@
 #include <vector>
 #include <limits.h>
 
-#define RAT_DEBUG
 #include "rat.h"
 using namespace shitrndr;
 
@@ -80,12 +79,15 @@ int main()
 		{
 			iv = {((gk(SDLK_d) || gk(SDLK_RIGHT))?1.f:0.f) - ((gk(SDLK_a) || gk(SDLK_LEFT))?1.f:0.f),
 					((gk(SDLK_w) || gk(SDLK_UP))?1.f:0.f) - ((gk(SDLK_s) || gk(SDLK_DOWN))?1.f:0.f)};
-			world.cam->pos += v3f{iv.x, Input::getKey(SDLK_LSHIFT)?iv.y:0, Input::getKey(SDLK_LSHIFT)?0:iv.y}*3*delta;
+			world.cam->pos += (gk(SDLK_LSHIFT)?world.cam->up():world.cam->forward())*iv.y*3*delta;
+			world.cam->pos += world.cam->right()*iv.x*3*delta;
 			
-			if(Input::getKey(SDLK_j)) world.cam->angles.y -= delta*2;
-			if(Input::getKey(SDLK_l)) world.cam->angles.y += delta*2;
-			if(Input::getKey(SDLK_i)) world.cam->angles.x -= delta*2;
-			if(Input::getKey(SDLK_k)) world.cam->angles.x += delta*2;
+			if(Input::getKey(SDLK_j)) world.cam->angles.y += delta*2;
+			if(Input::getKey(SDLK_l)) world.cam->angles.y -= delta*2;
+			if(Input::getKey(SDLK_i)) world.cam->angles.x += delta*2;
+			if(Input::getKey(SDLK_k)) world.cam->angles.x -= delta*2;
+			if(Input::getKey(SDLK_u)) world.cam->angles.z += delta*2;
+			if(Input::getKey(SDLK_o)) world.cam->angles.z -= delta*2;
 
 			//world.cam->plane_offset = float(Input::getMP().y)*5*5/H;
 		}
@@ -97,8 +99,6 @@ int main()
 		{
 			#ifdef RAT_DEBUG
 			renderFPS(time, delta);
-			renderText(std::to_string(world.cam->plane_offset), 10, 60);
-			renderText(std::to_string(world.cam->fov), 10, 80);
 			
 			v2i cp = getHelperCoords(world.cam->pos);
 			RenderFillCircle(oren, cp.x, cp.y, 2);

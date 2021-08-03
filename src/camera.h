@@ -9,7 +9,7 @@ struct Camera
 	v3f pos = {0,0,-5};
 	v3f angles = {};
 	
-	float fov = M_PIf32/2;
+	float fov = M_PIf32/4;
 	float plane_offset = .5;
 	
 	v2i output_dims = {108, 96};
@@ -25,4 +25,11 @@ struct Camera
 	v3f getRayDir(const v2i& pp);
 	
 	SDL_Colour castRay(int x, int y, int seed);
+
+	inline v3f forward() { return rotatePoint({0,0,1}, angles); }
+	inline v3f back() { return forward()*-1; }
+	inline v3f right() { return rotatePoint({1,0,0}, angles); }
+	inline v3f left() { return right()*-1; }
+	inline v3f up() { return rotatePoint({0,1,0}, angles); }
+	inline v3f down() { return up()*-1; }
 };

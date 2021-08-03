@@ -1,5 +1,4 @@
 #include <cmath>
-#define RAT_DEBUG
 #include "camera.h"
 #include "ray.h"
 #include "world.h"
@@ -44,14 +43,14 @@ v3f Camera::getPlaneCoord(const v2i &pp)
 {
 	v2f pd = getPlaneDims();
 	float dx = float(pp.x*2 - output_dims.x)/output_dims.x*pd.x, dy = float(pp.y*2-output_dims.y)/output_dims.y*pd.y;
-	return pos+v3f{dx, dy, 0};
+	return pos+rotatePoint(v3f{dx, dy, 0}, angles);
 }
 v3f Camera::getRayDir(const v2i &pp)
 {
 	float xs = float(pp.x*2 - output_dims.x)/output_dims.x * float(output_dims.x)/output_dims.y;
 	float ys = float(pp.y*2 - output_dims.y)/output_dims.y;
 	float tfot = std::tan(fov/2);
-	return v3f{xs*tfot, -ys*tfot, 1}.normalised();
+	return rotatePoint(v3f{xs*tfot, -ys*tfot, 1}, angles).normalised();
 }
 
 SDL_Colour Camera::castRay(int x, int y, int seed)
