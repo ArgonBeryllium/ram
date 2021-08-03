@@ -39,11 +39,10 @@ struct Ray
 			sdfs = world->sdfs;
 		float min_dist = MAXFLOAT, max_dist = 0;
 		float d = 0, md = 0;
-		v3f o = ori, p;
+		v3f p = ori;
 		while(d<DIST_MAX_THRESHOLD)
 		{
-			p = o+dir*md;
-			o = p;
+			p = p+dir*md;
 			md = MAXFLOAT;
 			for(SDF* sdf : world->sdfs)
 			{
