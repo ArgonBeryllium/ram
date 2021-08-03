@@ -14,7 +14,7 @@ struct Light
 struct Shader
 {
 	static Shader* def_inst; // default instance
-	virtual SDL_Colour getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
+	virtual FloatCol getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) = 0;
 };
 struct Shader_Def : Shader
 {
@@ -22,7 +22,7 @@ struct Shader_Def : Shader
 	float smooth = .3;
 	float reflective = .2;
 	
-	SDL_Colour getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
+	FloatCol getPixelValue(Solid* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
 };
 
 struct World;

@@ -2,6 +2,7 @@
 #include "operators.h"
 #include "helpers.h"
 #include "vec3.h"
+#include "colours.h"
 
 struct World;
 struct Camera
@@ -24,7 +25,7 @@ struct Camera
 	v3f getPlaneCoord(const v2i& pp);
 	v3f getRayDir(const v2i& pp);
 	
-	SDL_Colour castRay(int x, int y, int seed);
+	FloatCol castRay(int x, int y, int seed);
 
 	inline v3f forward() { return rotatePoint({0,0,1}, angles); }
 	inline v3f back() { return forward()*-1; }
