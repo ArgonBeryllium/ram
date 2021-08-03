@@ -1,4 +1,6 @@
 #pragma once
+#define RAT_DEBUG
+
 #include <shitrndr.h>
 #include <SDL2/SDL_ttf.h>
 #include <map>
