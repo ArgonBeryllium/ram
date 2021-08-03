@@ -33,6 +33,7 @@ struct Ray
 					}
 				sdfs.push_back(sdf);
 				cnt:;
+				if(exclude.empty()) break;
 			}
 		}
 		else

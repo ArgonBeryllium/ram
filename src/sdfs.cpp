@@ -3,7 +3,7 @@
 #include "ray.h"
 
 Shader* Shader::def_inst = new Shader_Def{};
-static constexpr size_t BOUNCE_COUNT = 4;
+static constexpr size_t BOUNCE_COUNT = 3;
 
 SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersection& o_i, uint32_t rec)
 {
@@ -46,7 +46,7 @@ SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersect
 	if(rec<BOUNCE_COUNT)
 	{
 		ray.dir = normal + dir_rough_offset;
-		Intersection i = ray.march(obj->parent_world);
+		Intersection i = ray.march(obj->parent_world, {obj});
 		if(i.intersecting)
 		{
 			SDL_Colour nc = i.sdf->shader->getPixelValue(i.sdf, ray, i, rec+1);
