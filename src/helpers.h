@@ -42,8 +42,11 @@ inline void renderText(const std::string& text, int x, int y, bool cache = 0, SD
 
 inline void initHelpers()
 {
-	TTF_Init();
-	font = TTF_OpenFont("res/ProggyTiny.ttf", 30);
+	if(TTF_Init())
+		std::cerr << "Couldn't initialise SDL_TTF: " << TTF_GetError() << '\n';
+	font = TTF_OpenFont("res/font.ttf", 30);
+	if(!font)
+		std::cerr << "Couldn't load debug window font: " << TTF_GetError() << '\n';
 
 	SDL_CreateWindowAndRenderer(256, 256, 0, &owin, &oren);
 	int w, h;
