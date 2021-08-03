@@ -24,7 +24,7 @@ struct Shader_Def : Shader
 	FloatCol col = {1,1,1,1};
 	float smooth = .2;
 	float reflective = .1;
-	float ambient_occlusion = .02;
+	float ambient_occlusion = .01;
 	
 	FloatCol getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
 };
