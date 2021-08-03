@@ -35,7 +35,8 @@ SDL_Colour Shader_Def::getPixelValue(SDF *obj, const Ray& o_ray, const Intersect
 		ray.dir = dir_light;
 		if(!ray.march(obj->parent_world).intersecting)
 		{
-			float lum = std::pow(std::abs(dot(normal, dir_light.normalised())), std::pow(smooth, 5.)*1000) / (o_i.surf_point-l->pos).getLengthSquared()*l->intensity;
+			float lum = std::max(1-(std::max(o_i.steps-1.f,0.f)*ambient_occlusion), 0.f) * 5 * // AO
+			            std::pow(std::abs(dot(normal, dir_light.normalised())), std::pow(smooth, 5.)*1000) / (o_i.surf_point-l->pos).getLengthSquared()*l->intensity;
 			r += lum*l->col.r;
 			g += lum*l->col.g;
 			b += lum*l->col.b;

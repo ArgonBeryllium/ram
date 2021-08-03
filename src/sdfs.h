@@ -24,6 +24,7 @@ struct Shader_Def : Shader
 	FloatCol col = {1,1,1,1};
 	float smooth = .3;
 	float reflective = .2;
+	float ambient_occlusion = .02;
 	
 	SDL_Colour getPixelValue(SDF* obj, const Ray &ray, const Intersection &i, uint32_t rec = 0) override;
 };
@@ -64,7 +65,7 @@ struct Sphere : SDF
 	#ifdef RAM_DEBUG
 	void renderPreview(SDL_Renderer* r) override
 	{
-		v2i sp = getHelperCoords(pos); 
+		v2i sp = getHelperCoords(pos);
 		shitrndr::RenderDrawCircle(r, sp.x, sp.y, radius*oscale);
 	}
 	#endif
