@@ -5,8 +5,8 @@
 struct v3f
 {
 	float x, y, z;
-	float getLengthSquared() { return x*x+y*y+z*z; }
-	float getLength() { return std::sqrt(getLengthSquared()); }
+	float getLengthSquared() const { return x*x+y*y+z*z; }
+	float getLength() const { return std::sqrt(getLengthSquared()); }
 	v3f normalised();
 };
 inline v3f operator+(const v3f& a, const v3f& b) { return {a.x+b.x, a.y+b.y, a.z+b.z}; }
