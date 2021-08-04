@@ -36,16 +36,34 @@ inline v3f rotatePoint(v3f v, v3f angles, v3f origin = {})
 {
 	v3f out;
 	v -= origin;
-	float xm = std::sqrt(v.y*v.y + v.z*v.z);
-	float ym = std::sqrt(v.z*v.z + v.x*v.x);
-	float zm = std::sqrt(v.y*v.y + v.x*v.x);
+	if(!angles.getLengthSquared()) return v;
 
-	float xa = std::atan2(v.y, v.z) + angles.x;
-	float ya = std::atan2(v.z, v.x) + angles.y;
-	float za = std::atan2(v.y, v.x) + angles.z;
-
-	out.x = std::cos(ya)*ym + std::cos(za)*zm;
-	out.y = std::sin(xa)*xm + std::sin(za)*zm;
-	out.z = std::cos(xa)*xm + std::sin(ya)*ym;
+	if(angles.x)
+	{
+		float xm = std::sqrt(v.y*v.y + v.z*v.z);
+		float xa = std::atan2(v.y, v.z) + angles.x;
+		out.x = v.x;
+		out.y = std::sin(xa)*xm;
+		out.z = std::cos(xa)*xm;
+		return rotatePoint(out, v3f{0, angles.y, angles.z});
+	}
+	if(angles.y)
+	{
+		float ym = std::sqrt(v.z*v.z + v.x*v.x);
+		float ya = std::atan2(v.z, v.x) + angles.y;
+		out.x = std::cos(ya)*ym;
+		out.y = v.y;
+		out.z = std::sin(ya)*ym;
+		return rotatePoint(out, v3f{angles.x, 0, angles.z});
+	}
+	if(angles.z)
+	{
+		float zm = std::sqrt(v.y*v.y + v.x*v.x);
+		float za = std::atan2(v.y, v.x) + angles.z;
+		out.x = std::cos(za)*zm;
+		out.y = std::sin(za)*zm;
+		out.z = v.z;
+		return rotatePoint(out, v3f{angles.x, angles.y, 0});
+	}
 	return out*2 - v*2;
 };
