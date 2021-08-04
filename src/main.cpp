@@ -86,8 +86,6 @@ int main()
 			if(Input::getKey(SDLK_l)) world.cam->angles.y -= delta*2;
 			if(Input::getKey(SDLK_i)) world.cam->angles.x += delta*2;
 			if(Input::getKey(SDLK_k)) world.cam->angles.x -= delta*2;
-			if(Input::getKey(SDLK_u)) world.cam->angles.z += delta*2;
-			if(Input::getKey(SDLK_o)) world.cam->angles.z -= delta*2;
 
 			//world.cam->plane_offset = float(Input::getMP().y)*5*5/H;
 		}
