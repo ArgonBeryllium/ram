@@ -70,15 +70,22 @@ struct Sphere : SDF
 	}
 	#endif
 };
-struct Cuboid : SDF
+struct RotRound : SDF
+{
+	v3f angles;
+	float rounding = 0;
+
+	RotRound(World* parent_world_, v3f pos_) : SDF(parent_world_, pos_) {}
+};
+struct Cuboid : RotRound
 {
 	v3f dims;
-	float rounding = 0;
-	Cuboid(World* parent_world_, v3f pos_ = {}, v3f dims_ = {1,1,1}) : SDF(parent_world_, pos_), dims(dims_) {}
+	Cuboid(World* parent_world_, v3f pos_ = {}, v3f dims_ = {1,1,1}) : RotRound(parent_world_, pos_), dims(dims_) {}
 
 	float getSurfaceDist(v3f p) override
 	{
 		p -= pos;
+		p = rotatePoint(p, angles);
 		p.x = std::abs(p.x);
 		p.y = std::abs(p.y);
 		p.z = std::abs(p.z);
